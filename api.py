@@ -5,14 +5,19 @@ from PIL import Image
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 app = Flask(__name__)
 
-# Configure Cloudinary
+# Configure Cloudinary using environment variables
 cloudinary.config(
-    cloud_name='dpsvsblcz',  # Replace with your Cloudinary cloud name
-    api_key='796211564876846',  # Replace with your Cloudinary API key
-    api_secret='SseLecsEbOtLTVDuMuFY_JiiL-o'  # Replace with your Cloudinary API secret
+    cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
+    api_key=os.getenv('CLOUDINARY_API_KEY'),
+    api_secret=os.getenv('CLOUDINARY_API_SECRET')
 )
 
 @app.route('/remove-bg', methods=['POST'])
@@ -30,8 +35,13 @@ def remove_bg():
         return jsonify({'success': 'false', 'message': 'No selected file'}), 400
 
     try:
+        # Check file type
+        if not file.filename.lower().endswith(('.png', '.jpg', '.jpeg')):
+            return jsonify({'success': 'false', 'message': 'Invalid file type'}), 400
+
         # Read image file
         input_image = Image.open(file)
+
         # Convert to bytes
         input_bytes = io.BytesIO()
         input_image.save(input_bytes, format=input_image.format)
