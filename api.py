@@ -78,5 +78,4 @@ def remove_bg():
     except Exception as e:
         return jsonify({'success': 'false', 'message': str(e)}), 500
 
-if __name__ == '__main__':
-    app.run()
+
